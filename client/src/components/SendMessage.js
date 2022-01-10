@@ -1,26 +1,26 @@
 import { useState } from "react";
 import styled from "styled-components";
+import uniqid from 'uniqid'
 
-const SendMessage = ({ messages, setMessages, socket }) => {
+const SendMessage = ({ socket }) => {
 
-    socket.on('connect', () => console.log(`conncted with id: ${socket.id}`));
-
-    const [ newMessage, setNewMessage ] = useState({ _id: '', text: ''});
+    const [ newMessage, setNewMessage ] = useState("");
 
     const handleSendMessage = (ev) => {
         ev.preventDefault();
-        socket.emit('send-message', newMessage);
-        setNewMessage({ _id: '', text: ''});
+        socket.emit('send-message', { _id: uniqid(), text: newMessage, sender:'Mohammed Al-Kaf' });
+        setNewMessage("");
     };
 
     const handleMessageChange = (ev) => {
-        setNewMessage({ _id: Math.floor(Math.random() * 100000000000), text:ev.target.value });
+        setNewMessage(ev.target.value);
     }
+
     return(
         <Wrapper>
             <Form onSubmit = {(ev) => handleSendMessage(ev)}>
                 <MessageInput
-                    value = { newMessage.text }
+                    value = { newMessage }
                     onChange = {(ev) => handleMessageChange(ev)}
                 />
                 <SendButton type= "submit">

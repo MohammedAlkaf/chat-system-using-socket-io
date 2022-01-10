@@ -8,7 +8,7 @@ const options = {
     useUnifiedTopology: true,
 };
 
-const getMessages = async () => {
+const getMessages = async (io) => {
     const client = new MongoClient(MONGO_URI, options);
     await client.connect();
     console.log("connected");
@@ -18,7 +18,7 @@ const getMessages = async () => {
     client.close();
     console.log("disconnected");
 
-    return messages
+    io.emit('get-messages', messages);
 
 };
 

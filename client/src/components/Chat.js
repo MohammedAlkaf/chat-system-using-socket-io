@@ -13,6 +13,11 @@ const Chat = () => {
     },[]);
 
     useEffect(()=> {
+
+        if( socket === null){
+            return null
+        }
+
         socket?.on('connect', () => console.log(`conncted with id: ${socket.id}`));
 
         socket?.on("get-messages", (messages) => {
@@ -20,6 +25,9 @@ const Chat = () => {
             console.log(messages);
             setMessages(messages);
         });
+
+        // CLEAN UP THE EFFECT
+        return () => socket?.disconnect();
 
     }, [socket]);
 
@@ -33,7 +41,7 @@ const Chat = () => {
                 {
                     messages.map( (message) => {
                         return(
-                            <Message key = { message.id }>
+                            <Message key = { message._id }>
                                 {message.text}
                             </Message>
                         )
@@ -60,6 +68,8 @@ const Container = styled.div`
 display:flex;
 align-items: baseline;
 flex-direction: column;
+overflow:auto;
+height: calc( 100% - 60px);
 `;
 
 const Message = styled.div`

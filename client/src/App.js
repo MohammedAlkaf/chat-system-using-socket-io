@@ -1,6 +1,7 @@
 import Chat from "./components/Chat";
 import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
+
 const App = () => {
 
   return (
