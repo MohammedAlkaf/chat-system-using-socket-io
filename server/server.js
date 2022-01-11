@@ -3,6 +3,18 @@ const { getMessages } = require('./handlers/getMessages');
 const { sendMessage } = require('./handlers/sendMessage');
 const socketIo = require("socket.io");
 
+// MongoDB
+const { MongoClient } = require("mongodb");
+
+require("dotenv").config();
+const { MONGO_URI } = process.env;
+
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+};
+// ----------
+
 const PORT = 8000;
 const frontUrl = "http://localhost:3000";
 
@@ -24,19 +36,29 @@ const io = socketIo(server,{
     }
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
+    const client = new MongoClient(MONGO_URI, options);
+
+    await client.connect();
+
+    console.log("MongoClient connected");
+
     console.log("New client connected: ", socket.id);
 
-    socket.on('send-message', async (message) => {
+    await socket.on('send-message', async (message) => {
         
-        await sendMessage(message);
-        await getMessages(io);
+        await sendMessage(client, message);
+        await getMessages(client, io);
 
     });
 
-    socket.on("disconnect", () => {
-        console.log("Client disconnected");
+    await socket.on("disconnect", () => {
+
+        client.close();
+        console.log("MongoClient disconnected");
+
+        console.log("Client disconnected", socket.id);
     });
 
-    getMessages(io);
+    getMessages(client,io);
 });

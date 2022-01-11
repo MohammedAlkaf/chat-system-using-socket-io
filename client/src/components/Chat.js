@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import SendMessage from './SendMessage';
 import socketIoClient from "socket.io-client";
 
-const Chat = () => {
+const Chat = ({ active, setActive }) => {
 
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
@@ -13,22 +13,17 @@ const Chat = () => {
     },[]);
 
     useEffect(()=> {
-
         if( socket === null){
             return null
         }
-
-        socket?.on('connect', () => console.log(`conncted with id: ${socket.id}`));
-
-        socket?.on("get-messages", (messages) => {
+        socket.on('connect', () => console.log(`conncted with id: ${socket.id}`));
+        socket.on("get-messages", (messages) => {
             // expect server to send us the latest messages
-            console.log(messages);
             setMessages(messages);
         });
 
         // CLEAN UP THE EFFECT
-        return () => socket?.disconnect();
-
+        return () => socket.disconnect();
     }, [socket]);
 
     if( socket === null){
@@ -37,6 +32,7 @@ const Chat = () => {
     
     return(
         <Wrapper>
+            <Header> Room { active + 1 } </Header>
             <Container>
                 {
                     messages.map( (message) => {
@@ -55,13 +51,22 @@ const Chat = () => {
 
 const Wrapper = styled.div`
 position:relative;
-left: calc(50% - 200px);
-top: calc(50% - 350px);
 width: 400px;
 height: 700px;
-border-radius: 5px;
-background: white;
+border-radius: 10px;
+background-color: rgba(0,0,0,0.4);
 box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+`;
+
+const Header = styled.h2`
+display:flex;
+justify-content:center;
+align-items: center;
+color:white;
+height:50px;
+background-color: rgba(0,0,0,0.4);
+border-radius:10px 10px 0px 0px;
+margin:0;
 `;
 
 const Container = styled.div`
@@ -69,14 +74,23 @@ display:flex;
 align-items: baseline;
 flex-direction: column;
 overflow:auto;
-height: calc( 100% - 60px);
+height: calc( 100% - 105px);
 `;
 
 const Message = styled.div`
+float: right;
+max-width:300px;
 box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
-margin: 10px 10px ;
-padding: 3px 7px;
-border-radius:3px;
+margin-top: 5px;
+margin-bottom: 5px;
+margin-left: 10px;
+border-radius: 25px;
+background-color: #78e08f;
+padding: 5px 15px;
+position: relative;
+overflow-wrap: break-word;  
+word-wrap: break-word; 
+word-break: break-word;
 `;
 
 export default Chat
