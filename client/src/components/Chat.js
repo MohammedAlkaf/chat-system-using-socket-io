@@ -3,13 +3,15 @@ import { useState, useEffect } from 'react';
 import SendMessage from './SendMessage';
 import socketIoClient from "socket.io-client";
 import { useParams } from 'react-router-dom';
-const Chat = ({ active, setActive }) => {
+import Loading from './Loading';
+
+const Chat = ({ active }) => {
 
     const { room_id } = useParams();
 
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
-    
+    const [ chatStatus, setChatStatus ] = useState('loading')
     useEffect( () => {
         if(active !== undefined){
             setSocket(
@@ -23,11 +25,14 @@ const Chat = ({ active, setActive }) => {
         if( socket === null){
             return null
         }
+        setChatStatus('loading');
+
         socket.on('connect', () => console.log('New client with id: ', socket.id));
 
         socket.on("get-messages", (messages) => {
             // expect server to send us the latest messages
             setMessages(messages);
+            setChatStatus('idle');
         });
 
         // CLEAN UP THE EFFECT
@@ -44,25 +49,29 @@ const Chat = ({ active, setActive }) => {
             </Wrapper>
         )
     }
-
-    if( socket === null){
-        return <Wrapper>Loading</Wrapper>
-    }
     
     return(
         <Wrapper>
             <Header> Room {room_id} </Header>
-            <Container>
-                {
-                    messages.map( (message) => {
-                        return(
-                            <Message key = { message._id }>
-                                {message.text}
-                            </Message>
-                        )
-                    })
-                }
-            </Container>
+            {
+                chatStatus === 'loading'
+                ?
+                <Container>
+                    <Loading/>
+                </Container>
+                :
+                <Container>
+                    {
+                        messages.map( (message) => {
+                            return(
+                                <Message key = { message._id }>
+                                    {message.text}
+                                </Message>
+                            )
+                        })
+                    }
+                </Container>
+            }
             <SendMessage room_id = { room_id } socket = { socket }/>
         </Wrapper>
     )
