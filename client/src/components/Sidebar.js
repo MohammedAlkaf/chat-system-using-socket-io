@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import uniqid from 'uniqid'
 import Room from './Room';
@@ -29,7 +28,7 @@ display: flex;
 flex-direction: column;
 margin-right: 30px;
 width: 250px;
-height: 700px;
+height: 100%;
 border-radius: 10px;
 background-color: rgba(0,0,0,0.4);
 box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;

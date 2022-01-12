@@ -2,21 +2,24 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import SendMessage from './SendMessage';
 import socketIoClient from "socket.io-client";
-
+import { useParams } from 'react-router-dom';
 const Chat = ({ active, setActive }) => {
+
+    const { room_id } = useParams();
 
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
 
     useEffect( () => {
         setSocket(socketIoClient("http://localhost:8000"));
-    },[]);
+    },[room_id]);
 
     useEffect(()=> {
         if( socket === null){
             return null
         }
         socket.on('connect', () => console.log(`conncted with id: ${socket.id}`));
+
         socket.on("get-messages", (messages) => {
             // expect server to send us the latest messages
             setMessages(messages);
@@ -24,15 +27,26 @@ const Chat = ({ active, setActive }) => {
 
         // CLEAN UP THE EFFECT
         return () => socket.disconnect();
-    }, [socket]);
+    }, [socket, room_id]);
 
     if( socket === null){
-        return null
+        return <Wrapper>Loading</Wrapper>
+    }
+
+    if( active === undefined){
+        return(
+            <Wrapper>
+                <Header> Room </Header>
+                <Container>
+                    Please Select a Room
+                </Container>
+            </Wrapper>
+        )
     }
     
     return(
         <Wrapper>
-            <Header> Room { active + 1 } </Header>
+            <Header> Room {room_id} </Header>
             <Container>
                 {
                     messages.map( (message) => {
@@ -52,7 +66,7 @@ const Chat = ({ active, setActive }) => {
 const Wrapper = styled.div`
 position:relative;
 width: 400px;
-height: 700px;
+height:100%;
 border-radius: 10px;
 background-color: rgba(0,0,0,0.4);
 box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;

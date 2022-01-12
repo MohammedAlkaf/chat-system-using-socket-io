@@ -1,9 +1,15 @@
 import styled from 'styled-components';
-
+import { useHistory } from 'react-router-dom';
 const Room = ({room, index, setActive, active }) => {
 
+    const history = useHistory();
+
+    const handleRoomClick = () => {
+        setActive(index);
+        history.push(`/rooms/${ index + 1 }`)
+    }
     return(
-        <Wrapper active = { active === index } onClick = { () => setActive(index)} >
+        <Wrapper active = { active === index } onClick = { () => handleRoomClick()} >
             {room}
         </Wrapper>
     )

@@ -53,10 +53,8 @@ io.on("connection", async (socket) => {
     });
 
     await socket.on("disconnect", () => {
-
         client.close();
         console.log("MongoClient disconnected");
-
         console.log("Client disconnected", socket.id);
     });
 
