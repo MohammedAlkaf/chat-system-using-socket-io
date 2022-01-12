@@ -1,10 +1,10 @@
 
-const getMessages = async (client, io) => {
+const getMessages = async (client, io, room) => {
 
     const db = client.db("chatSystem");
-    const messages = await db.collection("messages").find().toArray();
+    const messages = await db.collection(`${room}`).find().toArray();
 
-    io.emit('get-messages', messages);
+    io.in(room).emit('get-messages', messages);
 
 };
 

@@ -9,16 +9,21 @@ const Chat = ({ active, setActive }) => {
 
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
-
+    
     useEffect( () => {
-        setSocket(socketIoClient("http://localhost:8000"));
+        if(active !== undefined){
+            setSocket(
+                socketIoClient("http://localhost:8000",
+                { query: `room=room_${room_id}` })
+            );
+        }
     },[room_id]);
 
     useEffect(()=> {
         if( socket === null){
             return null
         }
-        socket.on('connect', () => console.log(`conncted with id: ${socket.id}`));
+        socket.on('connect', () => console.log('New client with id: ', socket.id));
 
         socket.on("get-messages", (messages) => {
             // expect server to send us the latest messages
@@ -29,10 +34,6 @@ const Chat = ({ active, setActive }) => {
         return () => socket.disconnect();
     }, [socket, room_id]);
 
-    if( socket === null){
-        return <Wrapper>Loading</Wrapper>
-    }
-
     if( active === undefined){
         return(
             <Wrapper>
@@ -42,6 +43,10 @@ const Chat = ({ active, setActive }) => {
                 </Container>
             </Wrapper>
         )
+    }
+
+    if( socket === null){
+        return <Wrapper>Loading</Wrapper>
     }
     
     return(
@@ -58,7 +63,7 @@ const Chat = ({ active, setActive }) => {
                     })
                 }
             </Container>
-            <SendMessage messages = { messages } setMessages= { setMessages } socket = { socket }/>
+            <SendMessage room_id = { room_id } socket = { socket }/>
         </Wrapper>
     )
 }

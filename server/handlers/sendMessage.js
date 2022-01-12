@@ -1,8 +1,8 @@
 
-const sendMessage = async (client, message) => {
+const sendMessage = async (client, message, room) => {
 
         const db = client.db("chatSystem");
-        await db.collection("messages").insertOne(message);
+        await db.collection(`${room}`).insertOne(message);
 }
 ;
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import uniqid from 'uniqid'
 
-const SendMessage = ({ socket }) => {
+const SendMessage = ({ room_id,socket }) => {
 
     const [ newMessage, setNewMessage ] = useState("");
 

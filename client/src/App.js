@@ -9,6 +9,7 @@ import { CurrentUserContext } from "./contexts/userContext";
 const App = () => {
   const { isLoggedIn } = useContext(CurrentUserContext);
   const [ active, setActive ] =useState(undefined);
+  const [ status, setStatus ] = useState('loading');
 
   return (
     <BrowserRouter>
@@ -21,9 +22,9 @@ const App = () => {
                 </Route>
                 { isLoggedIn &&
                   <>
-                    <Sidebar active = { active } setActive = { setActive }/>
+                    <Sidebar active = { active } setActive = { setActive } setStatus = { setStatus }/>
                     <Route path="/rooms/:room_id">
-                      <Chat active = { active } setActive = { setActive }/>
+                      <Chat active = { active } setActive = { setActive } setStatus = { setStatus } status = { status }/>
                     </Route>
                   </>
                 }
