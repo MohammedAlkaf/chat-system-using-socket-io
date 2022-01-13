@@ -1,6 +1,9 @@
 const express = require("express");
 const { getMessages } = require('./handlers/getMessages');
 const { sendMessage } = require('./handlers/sendMessage');
+const { postNewUser } = require("./handlers/postNewUser");
+const { getExistingUser } = require("./handlers/getExistingUser");
+
 const socketIo = require("socket.io");
 
 // MongoDB
@@ -25,6 +28,9 @@ app.use(express.json());
 app.get("/chat", (req, res) => {
     res.status(200).json({ status: 200, message: 'success' })
 });
+
+app.post("/signup", postNewUser );
+app.get("/login", getExistingUser );
 
 const server = app.listen(PORT, function () {
     console.info("🌍 Listening on port " + PORT);

@@ -2,17 +2,22 @@ import { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
+import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare} from "react-icons/fi";
 
 const Signup = () => {
 
     const history = useHistory();
 
     const { isLoggedIn, setCurrentUser, currentUser, setIsLoggedIn } = useContext(CurrentUserContext);
-
     const initialUserInfo = {
         email:'',
-        password:''
+        password:'',
+        confirmPassword:'',
+        displayName:'',
+        avatarUrl:''
     };
+    const iconSize = 25;
+    const iconColor = '#292D38';
     
     const [ userInfo, setUserInfo] = useState(initialUserInfo);
 
@@ -25,26 +30,48 @@ const Signup = () => {
     return (
         <Wrapper>
             <Title>
-                Sign Up with a New Account
+                Sign up with a New Account
                 </Title>
-            <Form>                
-                <Input
-                    placeholder='Email'
-                />
-                <Input
-                    placeholder='Display Name'
-                />
-                <Input
-                    placeholder='Password'
-                />
-                <Input
-                    placeholder='Confirm Password'
-                />
-                <Input
-                    placeholder='Avatar URL'
-                />
+            <Form>
+                <Container>
+                    <Inputcontainer>
+                        <FiAtSign size = {iconSize} color = {iconColor} />
+                        <Input
+                            placeholder='Email'
+                            onChange={ (ev) => setUserInfo({...userInfo, email:ev.target.value})}
+                        />
+                    </Inputcontainer>                
+                    <Inputcontainer>
+                        <FiUser size = {iconSize} color = {iconColor} />
+                        <Input
+                            placeholder='Display Name'
+                            onChange={ (ev) => setUserInfo({...userInfo, displayName:ev.target.value})}
+                        />
+                    </Inputcontainer>
+                    <Inputcontainer>
+                        <FiLock size = {iconSize} color = {iconColor} />
+                        <Input
+                            placeholder='Password'
+                            onChange={ (ev) => setUserInfo({...userInfo, password:ev.target.value})}
+                        />
+                    </Inputcontainer>
+                    <Inputcontainer>
+                        <FiCheckSquare size = {iconSize} color = {iconColor} />
+                        <Input
+                            placeholder='Confirm Password'
+                            onChange={ (ev) => setUserInfo({...userInfo, confirmPassword:ev.target.value})}
+                        />
+                    </Inputcontainer>
+                    <Inputcontainer>
+                        <FiImage size = {iconSize} color = {'#292D38'} />
+                        <Input
+                            placeholder='Avatar URL'
+                            onChange={ (ev) => setUserInfo({...userInfo, avatarUrl:ev.target.value})}
+                        />
+                    </Inputcontainer>
+                </Container>
                 <Button type = 'submit'>
-                    Sign Up
+                    Sign up
                 </Button>
             </Form>
         </Wrapper>
@@ -61,7 +88,7 @@ border-radius: 0px 0px 10px 10px;
 const Title = styled.h2`
 margin: 0;
 font-size: 1em;
-height: 20%;
+height: 15%;
 display: flex;
 justify-content: center;
 align-items: center;
@@ -73,30 +100,42 @@ const Input = styled.input`
     border:0;
     color:black;
     box-shadow: none;
-    margin-bottom: 5px;
-    padding: 5px 10px;
+    margin-left: 5px;
     background: #D8DBE2;
+`;
+
+const Inputcontainer = styled.div`
+    display:flex;
+    align-items: center;
+    background: #D8DBE2;
+    padding: 5px;
+    margin-bottom: 4px;
 `;
 
 const Form = styled.form`
     position: relative;
-    height: 80%;
+    height: 85%;
     display: flex;
     flex-direction: column;
 `;
 
+const Container = styled.div`
+    display:flex;
+    height: 80%;
+    flex-direction: column;
+    justify-content: center;
+`;
+
 const Button = styled.button`
-position: absolute;
 width: 100%;
-bottom: 0;
+height: 20%;
 background: #58A4B0;
-margin-top: 25px;
 color: white;
 border: none;
-padding: 10px 30px;
 font: inherit;
 cursor: pointer;
 outline: inherit;
+border-radius: 0px 0px 10px 10px;
 &:disabled {
     cursor: not-allowed;
     opacity: 0.8;

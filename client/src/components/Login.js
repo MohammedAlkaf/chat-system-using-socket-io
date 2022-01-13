@@ -29,8 +29,8 @@ const Wrapper = styled.div`
     position:relative;
     display:flex;
     flex-direction: column;
-    width: 300px;
-    height: 320px;
+    width: 350px;
+    height: 350px;
     border-radius: 10px;
     color: white;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;

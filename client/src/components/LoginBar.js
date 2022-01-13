@@ -9,14 +9,14 @@ const LoginBar = ({ active, setActive }) => {
                 onClick={() => setActive('sign in')}
                 style = { { borderRadius: ' 10px 0px 0px 0px' }}
             >
-                Sign In
+                Sign in
             </Item>
             <Item 
                 active = {active === 'sign up'}
                 onClick={()=> setActive('sign up')}
                 style = { { borderRadius: ' 0px 10px 0px 0px' }}
             >
-                Sign Up
+                Sign up
             </Item>
         </Wrapper>
     )
