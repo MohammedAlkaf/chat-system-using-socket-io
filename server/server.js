@@ -30,7 +30,7 @@ app.get("/chat", (req, res) => {
 });
 
 app.post("/signup", postNewUser );
-app.get("/login", getExistingUser );
+app.get("/signin", getExistingUser );
 
 const server = app.listen(PORT, function () {
     console.info("🌍 Listening on port " + PORT);

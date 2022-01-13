@@ -49,34 +49,34 @@ const postNewUser = async (req, res) => {
         if(result.length !== 0){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400, data:newUserInfo,  message: "An Account with the Provided Email Already Exists"})
+            return res.status(400).json({ status: 400, result:newUserInfo,  message: "An Account with the Provided Email Already Exists"})
         }
 
         // Validate the users inputs
         if( password === "" || password === undefined ){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400, data:newUserInfo,  message: "Your password is missing"})
+            return res.status(400).json({ status: 400, result:newUserInfo,  message: "Your password is missing"})
         }
         else if( password !== confirmPassword ){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400, data:newUserInfo,  message: "Passwords don't match"})
+            return res.status(400).json({ status: 400, result:newUserInfo,  message: "Passwords don't match"})
         }
         else if( displayName === "" || displayName === undefined){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400, data:newUserInfo,  message: "Your display name is missing"})
+            return res.status(400).json({ status: 400, result:newUserInfo,  message: "Your display name is missing"})
         }
         else if ( email === "" || email === undefined){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400,data:newUserInfo, message: "Your email is missing"})
+            return res.status(400).json({ status: 400, result:newUserInfo, message: "Your email is missing"})
         }
         else if ( avatarUrl === "" || avatarUrl === undefined){
             client.close();
             console.log("disconnected");
-            return res.status(400).json({ status: 400,data:newUserInfo, message: "Your AvatarUrl is missing"})
+            return res.status(400).json({ status: 400, result:newUserInfo, message: "Your AvatarUrl is missing"})
         }
 
         await db.collection("users").insertOne(newUserInfo);
@@ -85,7 +85,7 @@ const postNewUser = async (req, res) => {
         console.log("disconnected");
 
         // if all inputs pass the validation, then allow the user to create the new account
-        return res.status(200).json({ status: 200, data: newUserInfo, message: "User info has been added"})
+        return res.status(200).json({ status: 200, result: newUserInfo, message: "User info has been added"})
 
     } catch (err) {
         console.log("Error", err)

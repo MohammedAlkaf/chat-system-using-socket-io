@@ -1,8 +1,10 @@
 import { useState, useContext } from 'react';
 import styled from 'styled-components';
+import { keyframes } from 'styled-components';
 import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
 import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare} from "react-icons/fi";
+import Loading from './Loading';
 
 const Signup = () => {
 
@@ -20,11 +22,32 @@ const Signup = () => {
     const iconColor = '#292D38';
     
     const [ userInfo, setUserInfo] = useState(initialUserInfo);
+    const [ fetchStatus, setFetchStatus ] = useState('idle');
 
-    const handleLogin = () => {
-        setCurrentUser(userInfo);
-        setIsLoggedIn(true);
-        history.push('/rooms/select');
+    const handleSignup = (ev) => {
+        ev.preventDefault();
+        setFetchStatus('loading');
+        fetch('/signup',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userInfo),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if( data.status === 200) {
+                console.log('Success: ', data.message);
+                setCurrentUser(data.result);
+                setIsLoggedIn(true);
+                setFetchStatus('idle');
+                history.push('/rooms/select');
+            }
+            else{
+                console.log('Error: ', data.message);
+                setFetchStatus('idle');
+            }
+        })
     }
     
     return (
@@ -32,13 +55,14 @@ const Signup = () => {
             <Title>
                 Sign up with a New Account
                 </Title>
-            <Form>
+            <Form onSubmit={(ev) => handleSignup(ev)}>
                 <Container>
                     <Inputcontainer>
                         <FiAtSign size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Email'
                             onChange={ (ev) => setUserInfo({...userInfo, email:ev.target.value})}
+                            type='email'
                         />
                     </Inputcontainer>                
                     <Inputcontainer>
@@ -46,6 +70,7 @@ const Signup = () => {
                         <Input
                             placeholder='Display Name'
                             onChange={ (ev) => setUserInfo({...userInfo, displayName:ev.target.value})}
+                            type='text'
                         />
                     </Inputcontainer>
                     <Inputcontainer>
@@ -53,6 +78,7 @@ const Signup = () => {
                         <Input
                             placeholder='Password'
                             onChange={ (ev) => setUserInfo({...userInfo, password:ev.target.value})}
+                            type='password'
                         />
                     </Inputcontainer>
                     <Inputcontainer>
@@ -60,6 +86,7 @@ const Signup = () => {
                         <Input
                             placeholder='Confirm Password'
                             onChange={ (ev) => setUserInfo({...userInfo, confirmPassword:ev.target.value})}
+                            type='password'
                         />
                     </Inputcontainer>
                     <Inputcontainer>
@@ -67,23 +94,43 @@ const Signup = () => {
                         <Input
                             placeholder='Avatar URL'
                             onChange={ (ev) => setUserInfo({...userInfo, avatarUrl:ev.target.value})}
+                            type='text'
                         />
                     </Inputcontainer>
                 </Container>
                 <Button type = 'submit'>
-                    Sign up
+                    {
+                        fetchStatus === "loading"
+                        ? <Loading/>
+                        : "Sign up"
+                    }
                 </Button>
             </Form>
         </Wrapper>
     )
 }
 
+const slideInLeft =  keyframes`
+    0% {
+        transform: rotateY(70deg);
+        transform-origin: right;
+        opacity: 0;
+    }
+    100% {
+        transform: rotateY(0);
+        transform-origin: right;
+        opacity: 1;
+    }
+`;
+
 const Wrapper = styled.div`
 width:100%;
 height: 100%;
 background: #373F51;
 border-radius: 0px 0px 10px 10px;
+animation: ${slideInLeft} 0.6s ease-in-out both;
 `;
+
 
 const Title = styled.h2`
 margin: 0;

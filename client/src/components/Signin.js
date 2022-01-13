@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
 import { FiAtSign, FiLock } from "react-icons/fi";
+import { keyframes } from 'styled-components';
+import Loading from './Loading';
 
 const Signin = () => {
 
     const history = useHistory();
 
     const { isLoggedIn, setCurrentUser, currentUser, setIsLoggedIn } = useContext(CurrentUserContext);
+    const [ fetchStatus, setFetchStatus ] = useState('idle');
 
     const iconSize = 25;
     const iconColor = '#292D38';
@@ -19,11 +22,24 @@ const Signin = () => {
     
     const [ loginForm, setLoginForm] = useState(initialUserInfo);
 
-    const handleLogin = (ev) => {
+    const handleSignin = (ev) => {
         ev.preventDefault();
-        setCurrentUser(loginForm);
-        setIsLoggedIn(true);
-        history.push('/rooms/select');
+        setFetchStatus('loading');
+        fetch(`/signin?email=${loginForm.email}&password=${loginForm.password}`)
+        .then((res) => res.json())
+        .then((data) => {
+            if(data.status === 200){
+                setCurrentUser(data.result);
+                console.log('Success',data.message)
+                setFetchStatus('idle');
+                history.push('/rooms/select');
+                setIsLoggedIn(true);
+            }
+            else{
+                setFetchStatus('idle');
+                console.log('Error',data.message)
+            }
+        })
     }
     
     return (
@@ -31,7 +47,7 @@ const Signin = () => {
             <Title>
                 Log into Your Account
             </Title>
-            <Form onSubmit={(ev) => handleLogin(ev)}>
+            <Form onSubmit={(ev) => handleSignin(ev)}>
                 <Container>
                     <Inputcontainer>
                         <FiAtSign size = {iconSize} color = {iconColor} />
@@ -45,7 +61,7 @@ const Signin = () => {
                         <FiLock size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Password'
-                            onChange={(ev) => setLoginForm({...loginForm, passowrd: ev.target.value }) }
+                            onChange={(ev) => setLoginForm({...loginForm, password: ev.target.value }) }
                         />
                     </Inputcontainer>
                     <SubContainer>
@@ -59,18 +75,35 @@ const Signin = () => {
                     </SubContainer>             
                 </Container>
                 <Button type = 'submit'>
-                    Sign in
+                    {
+                        fetchStatus === "loading"
+                        ? <Loading/>
+                        : "Sign in"
+                    }
                 </Button>
             </Form>
         </Wrapper>
     )
 }
 
+const animatin = keyframes`
+    0% {
+        transform: rotateY(-70deg);
+        transform-origin: left;
+        opacity: 0;
+    }
+    100% {
+        transform: rotateY(0);
+        transform-origin: left;
+        opacity: 1;
+    }
+`;
 const Wrapper = styled.div`
     width:100%;
     height: 100%;
     background: #373F51;
     border-radius: 0px 0px 10px 10px;
+    animation: ${animatin} 0.6s ease-in-out both;
 `;
 
 const Title = styled.h2`
