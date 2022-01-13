@@ -8,7 +8,14 @@ const SendMessage = ({ room_id,socket }) => {
 
     const handleSendMessage = (ev) => {
         ev.preventDefault();
-        socket.emit('send-message', { _id: uniqid(), text: newMessage, sender_id: socket.id });
+        socket.emit(
+            'send-message',
+            { 
+                _id: uniqid(),
+                text: newMessage,
+                sender_id: socket.id
+            }
+        );
         setNewMessage("");
     };
 
