@@ -2,16 +2,18 @@ import { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
-import { FiAtSign, FiLock } from "react-icons/fi";
+import { FiAtSign, FiLock, FiEye, FiEyeOff, FiAlertCircle } from "react-icons/fi";
 import { keyframes } from 'styled-components';
 import Loading from './Loading';
+
 
 const Signin = () => {
 
     const history = useHistory();
-
     const { isLoggedIn, setCurrentUser, currentUser, setIsLoggedIn } = useContext(CurrentUserContext);
     const [ fetchStatus, setFetchStatus ] = useState('idle');
+    const [ isPasswordShown, setIsPasswordShown ] = useState(false);
+    const [ errorMessage, setErrorMessage ] = useState({ status: 'idle', message:'no error'});
 
     const iconSize = 25;
     const iconColor = '#292D38';
@@ -37,6 +39,7 @@ const Signin = () => {
             }
             else{
                 setFetchStatus('idle');
+                setErrorMessage({ status: 'error', message:data.message})
                 console.log('Error',data.message)
             }
         })
@@ -53,7 +56,13 @@ const Signin = () => {
                         <FiAtSign size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Email'
-                            onChange={(ev) => setLoginForm({...loginForm, email: ev.target.value }) }
+                            onChange={(ev) => {
+                                setLoginForm({...loginForm, email: ev.target.value });
+                                setErrorMessage({ status: 'idle', message:'no error'});
+                            } }
+                            type='email'
+                            autoComplete='email'
+
                         />
                     </Inputcontainer>
 
@@ -61,8 +70,22 @@ const Signin = () => {
                         <FiLock size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Password'
-                            onChange={(ev) => setLoginForm({...loginForm, password: ev.target.value }) }
+                            onChange={(ev) => {
+                                setLoginForm({...loginForm, password: ev.target.value });
+                                setErrorMessage({ status: 'idle', message:'no error'});
+                            } }
+                            type={ isPasswordShown ? 'text' : 'password' }
+                            autoComplete= 'current-password'
                         />
+                        <EyeIcon
+                            onClick={() => setIsPasswordShown(!isPasswordShown)}
+                        >
+                            {
+                                isPasswordShown
+                                ? <FiEye size = {iconSize} color = {iconColor} />
+                                : <FiEyeOff size = {iconSize} color = {iconColor} />
+                            }
+                        </EyeIcon>
                     </Inputcontainer>
                     <SubContainer>
                         <a>
@@ -82,6 +105,13 @@ const Signin = () => {
                     }
                 </Button>
             </Form>
+            {
+                errorMessage.status === 'error' &&
+                <Error>
+                    <FiAlertCircle size = {30}/>
+                    <span>{errorMessage.message}</span>
+                </Error>
+            }
         </Wrapper>
     )
 }
@@ -124,12 +154,19 @@ const Container = styled.div`
 
 const Input = styled.input`
     font: inherit;
+    width: 80%;
     outline: none;
     border:0;
     color:black;
     box-shadow: none;
     margin-left: 5px;
     background: #D8DBE2;
+`;
+
+const EyeIcon = styled.div`
+float: right;
+display:flex;
+align-items: center;
 `;
 
 const Inputcontainer = styled.div`
@@ -186,5 +223,21 @@ const Button = styled.button`
         opacity: 0.8;
         color: darkgrey;
     }
+`;
+
+const Error = styled.div`
+font-size: 0.8em;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 10px;
+background: #B80000;
+border-radius: 10px;
+padding: 10px;
+box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+
+span{
+    margin-left: 10px;
+}
 `;
 export default Signin

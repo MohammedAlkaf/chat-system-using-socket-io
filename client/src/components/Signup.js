@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { keyframes } from 'styled-components';
 import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
-import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare} from "react-icons/fi";
+import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare, FiEye, FiEyeOff, FiAlertCircle} from "react-icons/fi";
 import Loading from './Loading';
 
 const Signup = () => {
@@ -23,6 +23,13 @@ const Signup = () => {
     
     const [ userInfo, setUserInfo] = useState(initialUserInfo);
     const [ fetchStatus, setFetchStatus ] = useState('idle');
+    const [ isPasswordShown, setIsPasswordShown ] = useState(false);
+    const [ errorMessage, setErrorMessage ] = useState({ status: 'idle', message:'no error'});
+
+    const handleInputChange = (name,value) => {
+        setUserInfo({...userInfo, [name]:value});
+        setErrorMessage({ status: 'idle', message:'no error'});
+    }
 
     const handleSignup = (ev) => {
         ev.preventDefault();
@@ -45,6 +52,7 @@ const Signup = () => {
             }
             else{
                 console.log('Error: ', data.message);
+                setErrorMessage({ status: 'error', message:data.message})
                 setFetchStatus('idle');
             }
         })
@@ -61,40 +69,58 @@ const Signup = () => {
                         <FiAtSign size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Email'
-                            onChange={ (ev) => setUserInfo({...userInfo, email:ev.target.value})}
+                            onChange={ (ev) => handleInputChange('email',ev.target.value)}
                             type='email'
+                            autoComplete='email'
                         />
                     </Inputcontainer>                
                     <Inputcontainer>
                         <FiUser size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Display Name'
-                            onChange={ (ev) => setUserInfo({...userInfo, displayName:ev.target.value})}
+                            onChange={ (ev) => handleInputChange('displayName',ev.target.value)}
                             type='text'
+                            autoComplete='name'
                         />
                     </Inputcontainer>
                     <Inputcontainer>
                         <FiLock size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Password'
-                            onChange={ (ev) => setUserInfo({...userInfo, password:ev.target.value})}
-                            type='password'
+                            onChange={ (ev) => handleInputChange('password',ev.target.value)}
+                            type={ isPasswordShown ? 'text' : 'password' }
+                            autoComplete= 'new-password'
                         />
+                        <EyeIcon
+                            onClick={() => setIsPasswordShown(!isPasswordShown)}
+                        >
+                            {
+                                isPasswordShown
+                                ? <FiEye size = {iconSize} color = {iconColor} />
+                                : <FiEyeOff size = {iconSize} color = {iconColor} />
+                            }
+                        </EyeIcon>
                     </Inputcontainer>
                     <Inputcontainer>
                         <FiCheckSquare size = {iconSize} color = {iconColor} />
                         <Input
                             placeholder='Confirm Password'
-                            onChange={ (ev) => setUserInfo({...userInfo, confirmPassword:ev.target.value})}
-                            type='password'
+                            onChange={ (ev) => handleInputChange('confirmPassword',ev.target.value)}
+                            type={ isPasswordShown ? 'text' : 'password' }
+                            autoComplete= 'new-password'
                         />
+                        <EyeIcon
+                            onClick={() => setIsPasswordShown(!isPasswordShown)}
+                        >
+                        </EyeIcon>
                     </Inputcontainer>
                     <Inputcontainer>
                         <FiImage size = {iconSize} color = {'#292D38'} />
                         <Input
                             placeholder='Avatar URL'
-                            onChange={ (ev) => setUserInfo({...userInfo, avatarUrl:ev.target.value})}
+                            onChange={ (ev) => handleInputChange('AvatarUrl',ev.target.value)}
                             type='text'
+                            autoComplete='url'
                         />
                     </Inputcontainer>
                 </Container>
@@ -106,6 +132,13 @@ const Signup = () => {
                     }
                 </Button>
             </Form>
+            {
+                errorMessage.status === 'error' &&
+                <Error>
+                    <FiAlertCircle size = {30}/>
+                    <span>{errorMessage.message}</span>
+                </Error>
+            }
         </Wrapper>
     )
 }
@@ -144,6 +177,7 @@ align-items: center;
 const Input = styled.input`
     font: inherit;
     outline: none;
+    width: 80%;
     border:0;
     color:black;
     box-shadow: none;
@@ -157,6 +191,12 @@ const Inputcontainer = styled.div`
     background: #D8DBE2;
     padding: 5px;
     margin-bottom: 4px;
+`;
+
+const EyeIcon = styled.div`
+float: right;
+display:flex;
+align-items: center;
 `;
 
 const Form = styled.form`
@@ -187,6 +227,22 @@ border-radius: 0px 0px 10px 10px;
     cursor: not-allowed;
     opacity: 0.8;
     color: darkgrey;
+}
+`;
+
+const Error = styled.div`
+font-size: 0.8em;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 10px;
+background: #B80000;
+border-radius: 10px;
+padding: 10px;
+box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+
+span{
+    margin-left: 10px;
 }
 `;
 export default Signup
