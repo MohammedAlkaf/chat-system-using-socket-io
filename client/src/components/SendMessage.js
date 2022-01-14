@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
-import uniqid from 'uniqid'
+import uniqid from 'uniqid';
+import { CurrentUserContext } from '../contexts/userContext';
+import { FiSend } from "react-icons/fi";
 
 const SendMessage = ({ room_id,socket }) => {
 
     const [ newMessage, setNewMessage ] = useState("");
+    const { currentUser } = useContext(CurrentUserContext);
 
     const handleSendMessage = (ev) => {
         ev.preventDefault();
+        const date = new Date();
         socket.emit(
             'send-message',
-            { 
-                _id: uniqid(),
+            {
+                displayName: currentUser.displayName,
                 text: newMessage,
-                sender_id: socket.id
+                avatarUrl: currentUser.avatarUrl,
+                sender_id: currentUser._id,
+                createdAt: date.toISOString()
             }
         );
         setNewMessage("");
@@ -31,7 +37,7 @@ const SendMessage = ({ room_id,socket }) => {
                     onChange = {(ev) => handleMessageChange(ev)}
                 />
                 <SendButton type= "submit">
-                    SEND
+                    <FiSend size = {20}/>
                 </SendButton>
             </Form>
         </Wrapper>
@@ -57,7 +63,7 @@ border-radius:0px 0px 10px 10px;
 `;
 
 const MessageInput = styled.input`
-flex:4;
+flex:5;
 height: 30px;
 font-family: inherit;
 font-size: inherit;
@@ -75,9 +81,12 @@ word-break: break-word;
 const SendButton = styled.button`
 flex:1;
 font-weight:bold;
-border: 2px solid white;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 0;
 padding: 0;
-background: lightgrey;
+background: #A9BCD0;
 cursor: pointer;
 color:black;
 

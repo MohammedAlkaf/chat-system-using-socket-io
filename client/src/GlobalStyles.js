@@ -4,8 +4,13 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto Mono', monospace, Helvetica, Sans-Serif;
+    font-family: 'Ubuntu', sans-serif;
     box-sizing: border-box;
+  }
+
+  p{
+    margin:0;
+    padding:0;
   }
 `;
  

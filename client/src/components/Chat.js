@@ -1,14 +1,17 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import SendMessage from './SendMessage';
 import socketIoClient from "socket.io-client";
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 import Loading from './Loading';
+import { CurrentUserContext } from '../contexts/userContext';
 
 const Chat = ({ active }) => {
 
     const { room_id } = useParams();
 
+    const { currentUser } = useContext(CurrentUserContext);
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
     const [ chatStatus, setChatStatus ] = useState('loading')
@@ -52,7 +55,10 @@ const Chat = ({ active }) => {
     
     return(
         <Wrapper>
-            <Header> Room {room_id} </Header>
+            <Header> 
+                <span>Logged in as {currentUser.displayName}</span>
+                Room {room_id} 
+            </Header>
             {
                 chatStatus === 'loading'
                 ?
@@ -60,17 +66,35 @@ const Chat = ({ active }) => {
                     <Loading/>
                 </Container>
                 :
-                <Container>
-                    {
-                        messages.map( (message) => {
-                            return(
-                                <Message key = { message._id }>
-                                    {message.text}
-                                </Message>
-                            )
-                        })
-                    }
-                </Container>
+                <MessagesContainer>
+                    {messages.map(({ _id, text, avatarUrl, sender_id, displayName, createdAt }) => (
+                        <div>
+                            {
+                                sender_id === currentUser._id 
+                                ? 
+                                <MessageContainerSent key={_id}>
+                                    <MessageInfoSent>
+                                        <MessageSent key={_id} >
+                                            <Text>{text}</Text>
+                                        </MessageSent>
+                                        <Time>{moment(createdAt).calendar()}</Time>
+                                    </MessageInfoSent>
+                                </MessageContainerSent>
+                                :
+                                <MessageContainerReceived key={_id}>
+                                    <UserImg src={'https://user-images.githubusercontent.com/30195/34457818-8f7d8c76-ed82-11e7-8474-3825118a776d.png'} alt="" key={_id} />
+                                    <MessageInfo>
+                                        <Sender>{displayName}</Sender>
+                                        <MessageReceived key={_id} >
+                                            <Text>{text}</Text>
+                                        </MessageReceived>
+                                        <Time>{moment(createdAt).calendar()}</Time>
+                                    </MessageInfo>
+                                </MessageContainerReceived>
+                            }
+                        </div>
+                    ))}
+                </MessagesContainer>
             }
             <SendMessage room_id = { room_id } socket = { socket }/>
         </Wrapper>
@@ -88,37 +112,115 @@ box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px
 
 const Header = styled.h2`
 display:flex;
+flex-direction: column;
 justify-content:center;
 align-items: center;
 color:white;
-height:50px;
+height:60px;
 background-color: rgba(0,0,0,0.4);
 border-radius:10px 10px 0px 0px;
 margin:0;
+
+span{
+    margin:0px;
+    padding:5px;
+    font-size: 0.45em;
+}
 `;
 
 const Container = styled.div`
 display:flex;
-align-items: baseline;
-flex-direction: column;
-overflow:auto;
+justify-content: center;
+align-items: center;
 height: calc( 100% - 105px);
 `;
 
+const MessagesContainer = styled.div`
+    display: flex;
+    height: calc( 100% - 105px);
+    flex-direction: column;
+    overflow: auto;
+`;
+
+const MessageContainer = styled.div`
+display:flex;
+/* border:1px solid red; */
+padding:3px 10px;
+`;
+
+const MessageInfo = styled.div`
+display: flex;
+flex-direction:column;
+align-items: baseline;
+`;
+
+const MessageInfoSent = styled(MessageInfo)`
+	align-items: flex-end;
+`;
+
+const Sender = styled.div`
+font-size:0.75em;
+margin-left: 9px;
+margin-bottom:3px;
+color:#1B1B1E;
+font-weight: 700;
+`;
+const MessageContainerSent = styled(MessageContainer)`
+flex-direction: row-reverse;
+`;
+
+const Time = styled.div`
+font-size:0.7em;
+margin: 3px 20px;
+color: #D8DBE2;
+`;
+
+const MessageContainerReceived = styled(MessageContainer)`
+`;
+
 const Message = styled.div`
-float: right;
-max-width:300px;
-box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
-margin-top: 5px;
-margin-bottom: 5px;
-margin-left: 10px;
-border-radius: 25px;
-background-color: #78e08f;
-padding: 5px 15px;
-position: relative;
-overflow-wrap: break-word;  
-word-wrap: break-word; 
-word-break: break-word;
+    display: flex;
+    border-radius: 30px;
+    align-items: center;
+    color:black;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    overflow-wrap: break-word;  
+    word-wrap: break-word; 
+    word-break: break-word;
+    max-width:350px;
+`;
+
+const MessageSent = styled(Message)`
+    margin-right:10px;
+    background-color: #3C4552;
+    color: white;
+    border-top-right-radius: 0px;
+    flex-direction: row-reverse;
+    text-align: end;
+    float: right;
+`;
+
+const MessageReceived = styled(Message)`
+    margin-left:10px;
+    background-color: #58A4B0;
+    color:white;
+    border-top-left-radius: 0px;
+    float: left;
+`;
+
+const UserImg = styled.img`
+    border-radius: 50%;
+    height: 35px;
+    border: 2px solid white;
+`;
+
+const Text = styled.p`
+    padding: 5px;
+    font-weight: 400;
+    font-size: 0.95em;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-wrap: break-word;
 `;
 
 export default Chat

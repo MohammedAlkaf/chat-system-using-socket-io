@@ -118,7 +118,7 @@ const Signup = () => {
                         <FiImage size = {iconSize} color = {'#292D38'} />
                         <Input
                             placeholder='Avatar URL'
-                            onChange={ (ev) => handleInputChange('AvatarUrl',ev.target.value)}
+                            onChange={ (ev) => handleInputChange('avatarUrl',ev.target.value)}
                             type='text'
                             autoComplete='url'
                         />
