@@ -3,7 +3,7 @@ import styled from "styled-components";
 import GlobalStyles from "./GlobalStyles";
 import Sidebar from "./components/Sidebar";
 import { useState, useContext} from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Login from "./components/Login";
 import { CurrentUserContext } from "./contexts/userContext";
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
           <Container>
             <Switch>
                 <Route exact path="/">
-                  <Login/>
+                  { isLoggedIn ? <Redirect to="/rooms/select" /> : <Login/>}
                 </Route>
                 { isLoggedIn &&
                   <>

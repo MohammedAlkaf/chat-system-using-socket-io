@@ -5,7 +5,8 @@ import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
 import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare, FiEye, FiEyeOff, FiAlertCircle} from "react-icons/fi";
 import Loading from './Loading';
-import uploadImage from './uploadImage';
+import uploadImage from '../helpers/uploadImage';
+import { addLoginSession } from '../helpers/loginSessionHelpers';
 
 const Signup = () => {
 
@@ -48,6 +49,7 @@ const Signup = () => {
         .then(data => {
             if( data.status === 200) {
                 console.log('Success: ', data.message);
+                addLoginSession(data.result);
                 setCurrentUser(data.result);
                 setIsLoggedIn(true);
                 setFetchStatus('idle');

@@ -8,7 +8,7 @@ import Loading from './Loading';
 import { CurrentUserContext } from '../contexts/userContext';
 import * as FiIcons from "react-icons/fi";
 import Sidebar from './Sidebar';
-
+import LogoutButton from './LogoutButton';
 const Chat = ({ active, setActive }) => {
 
     const { room_id } = useParams();
@@ -55,9 +55,7 @@ const Chat = ({ active, setActive }) => {
                     : <FiIcons.FiMenu size = {35} color='white'/>
                 }
             </MenuToggle>
-            <Logout>
-                <FiIcons.FiPower size = {35} color='white'/>
-            </Logout>
+            <LogoutButton/>
             <Menu isMenuShown = { isMenuShown }>
                 <Sidebar active = { active } setActive = { setActive } setIsmenuShown = { setIsmenuShown } />
             </Menu>

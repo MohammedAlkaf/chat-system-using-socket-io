@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { FiAtSign, FiLock, FiEye, FiEyeOff, FiAlertCircle } from "react-icons/fi";
 import { keyframes } from 'styled-components';
 import Loading from './Loading';
+import { addLoginSession } from '../helpers/loginSessionHelpers';
 
 
 const Signin = () => {
@@ -31,6 +32,7 @@ const Signin = () => {
         .then((res) => res.json())
         .then((data) => {
             if(data.status === 200){
+                addLoginSession(data.result);
                 setCurrentUser(data.result);
                 console.log('Success',data.message)
                 setFetchStatus('idle');
