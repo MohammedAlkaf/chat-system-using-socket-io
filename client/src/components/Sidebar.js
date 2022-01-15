@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import uniqid from 'uniqid'
 import Room from './Room';
 
-const Sidebar = ({ active, setActive }) => {
+const Sidebar = ({ active, setActive, setIsmenuShown }) => {
 
     const rooms = [
         'Room 1',
@@ -14,14 +14,22 @@ const Sidebar = ({ active, setActive }) => {
         'Room 7',
         'Room 8',
         'Room 9',
-        'Room 10',
-        'Room 11',
-        'Room 12'
+        'Room 10'
     ]
     return(
         <Wrapper>
             {
-                rooms.map( (room, index)=> <Room key = { uniqid() } room = { room } index = { index } active = { active } setActive = { setActive }/>)
+                rooms.map( 
+                    (room, index)=> 
+                        <Room 
+                            key = { uniqid() } 
+                            room = { room }
+                            index = { index }
+                            active = { active }
+                            setActive = { setActive }
+                            setIsmenuShown = { setIsmenuShown }
+                        />
+                )
             }
         </Wrapper>
     );
@@ -34,10 +42,9 @@ position:relative;
 display: flex;
 flex-direction: column;
 margin-right: 30px;
-width: 250px;
+width: 100%;
 height: 100%;
-border-radius: 10px;
-background-color: rgba(0,0,0,0.4);
+background-color: rgba(0,0,0,0.8);
 box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 `;
 export default Sidebar

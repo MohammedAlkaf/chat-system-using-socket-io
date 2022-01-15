@@ -11,6 +11,7 @@ const SendMessage = ({ room_id,socket }) => {
 
     const handleSendMessage = (ev) => {
         ev.preventDefault();
+        if(newMessage.length === 0) return null;
         const date = new Date();
         socket.emit(
             'send-message',
@@ -58,7 +59,7 @@ display: flex;
 /* border: 1px solid red; */
 width: 100%;
 padding: 10px;
-background-color: rgba(0,0,0,0.4);
+background-color: rgba(0,0,0,0.8);
 border-radius:0px 0px 10px 10px;
 `;
 

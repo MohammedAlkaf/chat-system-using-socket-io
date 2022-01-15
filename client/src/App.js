@@ -22,7 +22,7 @@ const App = () => {
                 </Route>
                 { isLoggedIn &&
                   <>
-                    <Sidebar active = { active } setActive = { setActive } setStatus = { setStatus }/>
+                    {/* <Sidebar active = { active } setActive = { setActive } setStatus = { setStatus }/> */}
                     <Route path="/rooms/:room_id">
                       <Chat active = { active } setActive = { setActive } setStatus = { setStatus } status = { status }/>
                     </Route>

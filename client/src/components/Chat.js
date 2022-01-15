@@ -6,15 +6,19 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import Loading from './Loading';
 import { CurrentUserContext } from '../contexts/userContext';
+import * as FiIcons from "react-icons/fi";
+import Sidebar from './Sidebar';
 
-const Chat = ({ active }) => {
+const Chat = ({ active, setActive }) => {
 
     const { room_id } = useParams();
 
     const { currentUser } = useContext(CurrentUserContext);
     const [ messages, setMessages ] = useState([]);
     const [ socket, setSocket ] = useState(null);
-    const [ chatStatus, setChatStatus ] = useState('loading')
+    const [ chatStatus, setChatStatus ] = useState('loading');
+    const [ isMenuShown, setIsmenuShown ] = useState(false);
+
     useEffect( () => {
         if(active !== undefined){
             setSocket(
@@ -42,24 +46,35 @@ const Chat = ({ active }) => {
         return () => socket.disconnect();
     }, [socket, room_id]);
 
-    if( active === undefined){
-        return(
-            <Wrapper>
-                <Header> Room </Header>
+    return(
+        <Wrapper>
+            <MenuToggle onClick={() => setIsmenuShown(!isMenuShown)}>
+                {
+                    isMenuShown
+                    ? <FiIcons.FiX size = {35} color='white'/>
+                    : <FiIcons.FiMenu size = {35} color='white'/>
+                }
+            </MenuToggle>
+            <Logout>
+                <FiIcons.FiPower size = {35} color='white'/>
+            </Logout>
+            <Menu isMenuShown = { isMenuShown }>
+                <Sidebar active = { active } setActive = { setActive } setIsmenuShown = { setIsmenuShown } />
+            </Menu>
+            <Header> 
+                <span>Logged in as {currentUser.displayName}</span>
+                { active === undefined ? 'Select A Room' : `Room ${room_id}`
+                }
+            </Header>
+            {
+                active === undefined
+                ?
                 <Container>
                     Please Select a Room
                 </Container>
-            </Wrapper>
-        )
-    }
-    
-    return(
-        <Wrapper>
-            <Header> 
-                <span>Logged in as {currentUser.displayName}</span>
-                Room {room_id} 
-            </Header>
-            {
+                :
+                <>
+                {
                 chatStatus === 'loading'
                 ?
                 <Container>
@@ -82,7 +97,7 @@ const Chat = ({ active }) => {
                                 </MessageContainerSent>
                                 :
                                 <MessageContainerReceived key={_id}>
-                                    <UserImg src={'https://user-images.githubusercontent.com/30195/34457818-8f7d8c76-ed82-11e7-8474-3825118a776d.png'} alt="" key={_id} />
+                                    <UserImg src={avatarUrl} alt="user avatar" key={_id} />
                                     <MessageInfo>
                                         <Sender>{displayName}</Sender>
                                         <MessageReceived key={_id} >
@@ -94,7 +109,11 @@ const Chat = ({ active }) => {
                             }
                         </div>
                     ))}
+                    <br/>
                 </MessagesContainer>
+            }
+                </>
+
             }
             <SendMessage room_id = { room_id } socket = { socket }/>
         </Wrapper>
@@ -110,6 +129,30 @@ background-color: rgba(0,0,0,0.4);
 box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 `;
 
+const MenuToggle = styled.div`
+position: absolute;
+height: 60px;
+width:60px;
+display: flex;
+justify-content: center;
+align-items: center;
+cursor:pointer;
+`;
+
+const Logout = styled(MenuToggle)`
+right:0;
+cursor:pointer;
+`;
+
+const Menu = styled.div`
+top:60px;
+position:absolute;
+height: calc( 100% - 105px);
+transition: opacity 0.1s,  width 0.5s;
+overflow: hidden;
+${({ isMenuShown }) => isMenuShown ? `width:200px;` : `width:0; `}
+`;
+
 const Header = styled.h2`
 display:flex;
 flex-direction: column;
@@ -117,7 +160,7 @@ justify-content:center;
 align-items: center;
 color:white;
 height:60px;
-background-color: rgba(0,0,0,0.4);
+background-color: rgba(0,0,0,0.8);
 border-radius:10px 10px 0px 0px;
 margin:0;
 
@@ -140,6 +183,13 @@ const MessagesContainer = styled.div`
     height: calc( 100% - 105px);
     flex-direction: column;
     overflow: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const MessageContainer = styled.div`

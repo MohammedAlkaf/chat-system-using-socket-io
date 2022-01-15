@@ -5,6 +5,7 @@ import { CurrentUserContext } from '../contexts/userContext';
 import { useHistory } from 'react-router-dom';
 import { FiAtSign, FiUser, FiLock, FiImage, FiCheckSquare, FiEye, FiEyeOff, FiAlertCircle} from "react-icons/fi";
 import Loading from './Loading';
+import uploadImage from './uploadImage';
 
 const Signup = () => {
 
@@ -25,14 +26,16 @@ const Signup = () => {
     const [ fetchStatus, setFetchStatus ] = useState('idle');
     const [ isPasswordShown, setIsPasswordShown ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState({ status: 'idle', message:'no error'});
+    const [ userImage, setUserImage ] = useState("");
 
     const handleInputChange = (name,value) => {
         setUserInfo({...userInfo, [name]:value});
         setErrorMessage({ status: 'idle', message:'no error'});
-    }
+    };
 
-    const handleSignup = (ev) => {
+    const handleSignup = async (ev) => {
         ev.preventDefault();
+        await uploadImage(userImage, handleInputChange);
         setFetchStatus('loading');
         fetch('/signup',{
             method: 'POST',
@@ -116,11 +119,10 @@ const Signup = () => {
                     </Inputcontainer>
                     <Inputcontainer>
                         <FiImage size = {iconSize} color = {'#292D38'} />
-                        <Input
-                            placeholder='Avatar URL'
-                            onChange={ (ev) => handleInputChange('avatarUrl',ev.target.value)}
-                            type='text'
-                            autoComplete='url'
+                        <InputImg
+                            onChange={ (ev) => setUserImage(ev.target.files[0])}
+                            accept='image/*'
+                            type='file'
                         />
                     </Inputcontainer>
                 </Container>
@@ -244,5 +246,25 @@ box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px
 span{
     margin-left: 10px;
 }
+`;
+
+const InputImg = styled.input`
+    margin-left: 10px ;
+    font:inherit;
+    color: grey;
+    font-size:1em;
+    &::-webkit-file-upload-button {
+        visibility: hidden;
+        width:0px;
+    }
+    &::before{
+        content: 'Upload an Image';
+        color: white;
+        background: #373F51;
+        cursor: pointer;
+        border-radius: 5px;
+        padding:5px 10px;
+        font-family:inherit;
+    }
 `;
 export default Signup
