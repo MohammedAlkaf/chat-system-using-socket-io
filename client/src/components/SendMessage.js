@@ -61,6 +61,9 @@ width: 100%;
 padding: 10px;
 background-color: rgba(0,0,0,0.8);
 border-radius:0px 0px 10px 10px;
+@media (max-width: 414px) {
+    border-radius:0px;
+}
 `;
 
 const MessageInput = styled.input`

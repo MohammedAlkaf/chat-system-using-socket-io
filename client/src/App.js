@@ -43,6 +43,7 @@ width:100vw;
 height:100vh;
 display: flex;
 justify-content: center;
+padding:0;
 align-items: center;
 background: #7F7FD5;
 background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
@@ -50,11 +51,19 @@ background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 `;
 
 const Container = styled.div`
-height: 95%;
 max-height: 750px;
 width: 1000px;
 display: flex;
 justify-content: center;
 align-items: center;
+
+@media (max-width: 1000px) {
+        width:100vw;
+        height:100vh;
+}
+
+@media (max-height: 1000px) {
+        width:100vw;
+        height:100vh;}
 `;
 export default App;

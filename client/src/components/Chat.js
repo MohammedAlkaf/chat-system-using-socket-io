@@ -81,7 +81,7 @@ const Chat = ({ active, setActive }) => {
                 :
                 <MessagesContainer>
                     {messages.map(({ _id, text, avatarUrl, sender_id, displayName, createdAt }) => (
-                        <div>
+                        <div key={_id} >
                             {
                                 sender_id === currentUser._id 
                                 ? 
@@ -162,10 +162,15 @@ background-color: rgba(0,0,0,0.8);
 border-radius:10px 10px 0px 0px;
 margin:0;
 
+
 span{
     margin:0px;
     padding:5px;
     font-size: 0.45em;
+}
+
+@media (max-width: 414px) {
+    border-radius:0px;
 }
 `;
 
