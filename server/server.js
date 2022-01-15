@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(
   session({
     secret: "keyboard cat",
-    cookie: { maxAge: 60000 }, // expire in one-hour
+    cookie: { maxAge: 1000 * 60 * 60 }, // expire in one-hour
     resave: true,
     saveUninitialized: true,
   })
@@ -38,7 +38,6 @@ app.use(
 app.get("/get-login-session", getLoginSession);
 app.post("/add-login-session", postLoginSession);
 app.delete("/delete-login-session", deleteLoginSession);
-
 
 app.get("/chat", (req, res) => {
   res.status(200).json({ status: 200, message: "success" });

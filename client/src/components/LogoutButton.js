@@ -1,14 +1,19 @@
 import styled from "styled-components";
+import { useContext } from 'react';
 import * as FiIcons from "react-icons/fi";
 import { deleteLoginSession } from "../helpers/loginSessionHelpers";
 import { useHistory } from "react-router-dom";
+import { CurrentUserContext } from "../contexts/userContext";
 
 const LogoutButton =() => {
 
     const history = useHistory();
+    const { isLoggedIn, setCurrentUser, currentUser, setIsLoggedIn } = useContext(CurrentUserContext);
 
     const handleLogout = async () => {
         await deleteLoginSession();
+        setIsLoggedIn(false);
+        setCurrentUser(null);
         history.push('/');
     }
 
